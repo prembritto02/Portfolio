@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prem Britto — .NET Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f0e8;
+    --cream: #ede7d5;
+    --rust: #c4432b;
+    --teal: #1a6b6b;
+    --gold: #d4a843;
+    --slate: #3d4a52;
+    --light-slate: #8a9ba8;
+    --blue: #2563eb;
+    --blue-light: #3b82f6;
+    --blue-muted: #1e3a5f;
+    --dark-bg: #0d1117;
+    --dark-card: #161b22;
+    --dark-border: #21262d;
+    --mono: 'DM Mono', monospace;
+    --display: 'Fraunces', serif;
+    --body: 'Syne', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); overflow-x: hidden; cursor: none; }
+
+  .cursor { width: 12px; height: 12px; background: var(--rust); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s; }
+  .cursor-ring { width: 36px; height: 36px; border: 1.5px solid var(--rust); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.18s ease, opacity 0.2s; opacity: 0.5; }
+
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 100; opacity: 0.6; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 3rem; background: rgba(245,240,232,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(15,14,12,0.08); }
+  .nav-logo { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.18em; color: var(--rust); text-transform: uppercase; }
+  nav ul { list-style: none; display: flex; gap: 2rem; align-items: center; }
+  nav a { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; color: var(--slate); transition: color 0.2s; position: relative; }
+  nav a::after { content: ''; position: absolute; bottom: -3px; left: 0; width: 0; height: 1px; background: var(--rust); transition: width 0.25s; }
+  nav a:hover { color: var(--ink); }
+  nav a:hover::after { width: 100%; }
+  .nav-resume { background: var(--blue) !important; color: #fff !important; padding: 0.42rem 1rem; border-radius: 2px; transition: background 0.2s !important; }
+  .nav-resume:hover { background: var(--blue-light) !important; }
+  .nav-resume::after { display: none !important; }
+
+  #hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; padding-top: 5rem; position: relative; overflow: hidden; }
+  .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 5rem 3rem; position: relative; z-index: 2; }
+  .hero-eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; animation: fadeUp 0.7s ease both; }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 2rem; height: 1px; background: var(--teal); }
+  h1 { font-family: var(--display); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 700; line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 0.5rem; animation: fadeUp 0.7s 0.15s ease both; }
+  h1 em { font-style: italic; font-weight: 300; color: var(--rust); }
+  .hero-role { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue); margin-bottom: 1.5rem; animation: fadeUp 0.7s 0.2s ease both; }
+  .hero-sub { font-size: 0.97rem; line-height: 1.75; color: var(--slate); max-width: 40ch; margin-bottom: 2.5rem; animation: fadeUp 0.7s 0.3s ease both; }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.7s 0.45s ease both; }
+
+  .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.9rem 2rem; text-decoration: none; cursor: none; position: relative; overflow: hidden; }
+  .btn-primary::after { content: ''; position: absolute; inset: 0; background: var(--rust); transform: translateX(-100%); transition: transform 0.3s; }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-outline { display: inline-flex; align-items: center; gap: 0.5rem; border: 1.5px solid var(--ink); color: var(--ink); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.9rem 2rem; text-decoration: none; cursor: none; transition: background 0.2s, color 0.2s; }
+  .btn-outline:hover { background: var(--ink); color: var(--paper); }
+  .btn-blue { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--blue); color: #fff; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.9rem 2rem; text-decoration: none; cursor: none; transition: background 0.2s; border-radius: 2px; }
+  .btn-blue:hover { background: var(--blue-light); }
+
+  .hero-right { display: flex; align-items: center; justify-content: center; position: relative; animation: fadeIn 1s 0.3s ease both; }
+  .hero-graphic { position: relative; width: 360px; height: 460px; }
+  .hero-graphic .bg-shape { position: absolute; width: 300px; height: 370px; background: var(--cream); border: 1px solid rgba(15,14,12,0.12); top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(3deg); }
+  .hero-graphic .avatar-box { position: absolute; width: 280px; height: 350px; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, var(--blue-muted) 0%, var(--dark-bg) 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .avatar-monogram { font-family: var(--display); font-size: 7rem; font-weight: 700; color: rgba(37,99,235,0.22); line-height: 1; }
+  .avatar-dot-grid { position: absolute; bottom: -2rem; right: -2rem; width: 100px; height: 100px; background-image: radial-gradient(circle, var(--blue) 1.5px, transparent 1.5px); background-size: 12px 12px; opacity: 0.45; }
+  .status-badge { position: absolute; bottom: 2rem; left: -2rem; background: var(--paper); border: 1px solid var(--cream); padding: 0.7rem 1.2rem; display: flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); box-shadow: 4px 4px 0 var(--blue); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #4caf76; animation: pulse 2s infinite; }
+  .hero-code-snippet { position: absolute; top: 1rem; right: -1rem; background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 6px; padding: 0.8rem 1.1rem; font-family: var(--mono); font-size: 0.58rem; color: #79c0ff; line-height: 1.9; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .code-keyword { color: #ff7b72; }
+  .code-type { color: #ffa657; }
+  .code-string { color: #a5d6ff; }
+  .code-comment { color: #8b949e; }
+
+  .marquee-bar { background: var(--dark-bg); color: var(--paper); padding: 0.85rem 0; overflow: hidden; white-space: nowrap; }
+  .marquee-inner { display: inline-flex; animation: marquee 30s linear infinite; }
+  .marquee-item { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 0 2.2rem; opacity: 0.55; }
+  .marquee-sep { color: var(--blue); opacity: 1 !important; }
+
+  section { padding: 6rem 3rem; }
+  .section-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--rust); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.7rem; }
+  .section-label::before { content: ''; width: 1.5rem; height: 1px; background: var(--rust); }
+  .section-title { font-family: var(--display); font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 3rem; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--teal); }
+
+  #about { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 5rem; align-items: start; background: var(--cream); border-top: 1px solid rgba(15,14,12,0.08); border-bottom: 1px solid rgba(15,14,12,0.08); }
+  .about-text p { font-size: 0.98rem; line-height: 1.85; color: var(--slate); margin-bottom: 1.1rem; }
+  .about-text p strong { color: var(--ink); }
+  .about-text p em { color: var(--blue); font-style: normal; font-weight: 600; }
+  .about-highlight { margin-top: 1.8rem; border-left: 3px solid var(--blue); padding-left: 1.2rem; font-family: var(--display); font-size: 1rem; font-style: italic; color: var(--slate); line-height: 1.7; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .stat-card { background: var(--paper); border: 1px solid rgba(15,14,12,0.1); padding: 1.5rem; position: relative; overflow: hidden; transition: transform 0.2s; }
+  .stat-card:hover { transform: translateY(-3px); }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--blue); }
+  .stat-num { font-family: var(--display); font-size: 2.5rem; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 0.4rem; }
+  .stat-label { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--light-slate); }
+
+  #skills { max-width: 1140px; margin: 0 auto; }
+  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+  .skill-group { background: var(--paper); border: 1px solid rgba(15,14,12,0.1); padding: 1.8rem; transition: box-shadow 0.2s; }
+  .skill-group:hover { box-shadow: 5px 5px 0 var(--blue); }
+  .skill-group-icon { font-size: 1.4rem; margin-bottom: 0.8rem; }
+  .skill-group-title { font-family: var(--display); font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--ink); }
+  .skill-tag { display: inline-flex; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--cream); color: var(--slate); padding: 0.28rem 0.65rem; margin: 0.18rem; border: 1px solid rgba(15,14,12,0.08); transition: background 0.2s, color 0.2s; }
+  .skill-tag:hover { background: var(--blue); color: #fff; }
+  .skill-tag.blue { background: rgba(37,99,235,0.09); color: var(--blue); border-color: rgba(37,99,235,0.2); }
+
+  #experience { background: var(--dark-bg); color: var(--paper); padding: 6rem 3rem; }
+  #experience .section-label { color: var(--gold); }
+  #experience .section-label::before { background: var(--gold); }
+  #experience .section-title { color: var(--paper); }
+  #experience .section-title em { color: var(--gold); }
+  .timeline { display: flex; flex-direction: column; max-width: 900px; }
+  .timeline-item { display: grid; grid-template-columns: 170px 1fr; gap: 2.5rem; padding: 2.5rem 0; border-bottom: 1px solid rgba(245,240,232,0.07); position: relative; }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-date { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--light-slate); padding-top: 0.3rem; }
+  .timeline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); position: absolute; left: 165px; top: 2.8rem; }
+  .timeline-content h3 { font-family: var(--display); font-size: 1.3rem; font-weight: 600; color: var(--paper); margin-bottom: 0.2rem; }
+  .timeline-company { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-light); margin-bottom: 1rem; }
+  .timeline-content p { font-size: 0.88rem; line-height: 1.75; color: rgba(245,240,232,0.55); margin-bottom: 0.6rem; }
+  .timeline-highlights { list-style: none; margin: 0.8rem 0 1rem; }
+  .timeline-highlights li { font-size: 0.86rem; line-height: 1.72; color: rgba(245,240,232,0.5); padding-left: 1.2rem; position: relative; margin-bottom: 0.35rem; }
+  .timeline-highlights li::before { content: '▸'; position: absolute; left: 0; color: var(--blue); font-size: 0.68rem; }
+  .timeline-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+  .t-tag { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid rgba(37,99,235,0.3); color: var(--blue-light); padding: 0.22rem 0.6rem; }
+
+  #projects { max-width: 1140px; margin: 0 auto; }
+  .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .project-card { border: 1px solid rgba(15,14,12,0.1); padding: 2rem; position: relative; overflow: hidden; transition: transform 0.25s; background: var(--paper); }
+  .project-card:hover { transform: translateY(-5px); }
+  .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--blue), var(--teal)); }
+  .project-card:nth-child(2)::before { background: linear-gradient(90deg, var(--teal), var(--gold)); }
+  .project-card:nth-child(3)::before { background: linear-gradient(90deg, var(--gold), var(--rust)); }
+  .project-card:nth-child(4)::before { background: linear-gradient(90deg, var(--rust), var(--blue)); }
+  .project-num { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.15em; color: var(--light-slate); margin-bottom: 1rem; }
+  .project-card h3 { font-family: var(--display); font-size: 1.15rem; font-weight: 600; margin-bottom: 0.6rem; line-height: 1.3; }
+  .project-card p { font-size: 0.86rem; line-height: 1.72; color: var(--slate); margin-bottom: 1.2rem; }
+  .project-stack { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .p-tag { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.08em; background: rgba(37,99,235,0.08); color: var(--blue); padding: 0.22rem 0.55rem; border: 1px solid rgba(37,99,235,0.18); }
+
+  #tools { background: var(--dark-bg); color: var(--paper); padding: 6rem 3rem; }
+  #tools .section-label { color: var(--blue-light); }
+  #tools .section-label::before { background: var(--blue-light); }
+  #tools .section-title { color: var(--paper); }
+  #tools .section-title em { color: var(--blue-light); }
+  .tools-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; max-width: 1000px; }
+  .tool-badge { background: var(--dark-card); border: 1px solid var(--dark-border); padding: 1.3rem 1rem; text-align: center; transition: border-color 0.2s, transform 0.2s; }
+  .tool-badge:hover { border-color: var(--blue); transform: translateY(-3px); }
+  .tool-icon { font-size: 1.7rem; margin-bottom: 0.5rem; }
+  .tool-name { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,240,232,0.5); }
+
+  #bio-cards { background: var(--cream); border-top: 1px solid rgba(15,14,12,0.08); border-bottom: 1px solid rgba(15,14,12,0.08); padding: 6rem 3rem; }
+  .bio-cards-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1.5rem; max-width: 1140px; }
+  .bio-card { background: var(--paper); border: 1px solid rgba(15,14,12,0.1); padding: 2rem; position: relative; }
+  .bio-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--blue); }
+  .bio-card:nth-child(2)::before { background: var(--teal); }
+  .bio-card:nth-child(3)::before { background: var(--rust); }
+  .bio-card-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue); margin-bottom: 1rem; }
+  .bio-card-label.teal { color: var(--teal); }
+  .bio-card-label.rust { color: var(--rust); }
+  .bio-card p { font-size: 0.88rem; line-height: 1.82; color: var(--slate); }
+  .bio-card .headline-text { font-family: var(--display); font-size: 1rem; font-weight: 600; line-height: 1.55; color: var(--ink); }
+  .bio-card .github-text { font-family: var(--mono); font-size: 0.8rem; line-height: 1.75; color: var(--slate); }
+
+  #contact { background: var(--ink); color: var(--paper); padding: 6rem 3rem; text-align: center; }
+  #contact .section-label { color: var(--gold); justify-content: center; }
+  #contact .section-label::before { background: var(--gold); }
+  #contact .section-title { color: var(--paper); }
+  #contact .section-title em { color: var(--gold); }
+  .contact-inner { max-width: 580px; margin: 0 auto; }
+  .contact-inner p { font-size: 0.98rem; line-height: 1.75; color: rgba(245,240,232,0.55); margin-bottom: 2.5rem; }
+  .contact-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .contact-link { display: flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; color: var(--paper); border: 1.5px solid rgba(245,240,232,0.18); padding: 0.8rem 1.5rem; transition: all 0.2s; cursor: none; }
+  .contact-link:hover { background: var(--blue); border-color: var(--blue); }
+  .contact-link.blue-link { background: var(--blue); border-color: var(--blue); }
+  .contact-link.blue-link:hover { background: var(--blue-light); border-color: var(--blue-light); }
+
+  footer { background: var(--dark-bg); color: rgba(245,240,232,0.22); padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    #about { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+    .bio-cards-grid { grid-template-columns: 1fr; }
+    .timeline-item { grid-template-columns: 1fr; }
+    .timeline-dot { display: none; }
+    nav { padding: 1rem 1.5rem; }
+    section, #experience, #tools, #contact, #bio-cards { padding: 4rem 1.5rem; }
+  }
+  @media (max-width: 600px) {
+    .skills-grid { grid-template-columns: 1fr; }
+    nav ul { gap: 0.8rem; }
+    .nav-resume { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">&#123; Prem Britto &#125;</div>
+  <ul>
+    <li><a href="javascript:void(0)" data-nav="about">About</a></li>
+    <li><a href="javascript:void(0)" data-nav="skills">Skills</a></li>
+    <li><a href="javascript:void(0)" data-nav="experience">Experience</a></li>
+    <li><a href="javascript:void(0)" data-nav="projects">Projects</a></li>
+    <li><a href="javascript:void(0)" data-nav="tools">Tools</a></li>
+    <li><a href="javascript:void(0)" data-nav="contact">Contact</a></li>
+    <li><a href="#" class="nav-resume">⬇ Resume</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Open to new opportunities</div>
+    <h1>Prem <em>Britto</em></h1>
+    <div class="hero-role">.NET Developer · Backend Engineer</div>
+    <p class="hero-sub">
+      Building reliable, scalable backend systems with C# and .NET Core. Specialized in enterprise applications, Windows Services, and secure API integration — with 1.5 years of real-world impact.
+    </p>
+    <div class="hero-cta">
+      <a href="javascript:void(0)" data-nav="projects" class="btn-primary"><span>View My Work</span></a>
+      <a href="javascript:void(0)" data-nav="contact" class="btn-outline">Get In Touch</a>
+      <a href="#" class="btn-blue">⬇ Download Resume</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-graphic">
+      <div class="bg-shape"></div>
+      <div class="avatar-box">
+        <span class="avatar-monogram">PB</span>
+      </div>
+      <div class="avatar-dot-grid"></div>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        Open to work
+      </div>
+      <div class="hero-code-snippet">
+        <span class="code-comment">// Prem Britto</span><br>
+        <span class="code-keyword">public class</span> <span class="code-type">Developer</span> {<br>
+        &nbsp;&nbsp;<span class="code-keyword">string</span> Stack = <span class="code-string">"C# .NET Core"</span>;<br>
+        &nbsp;&nbsp;<span class="code-keyword">string</span> Focus = <span class="code-string">"Backend"</span>;<br>
+        &nbsp;&nbsp;<span class="code-keyword">bool</span> OpenToWork = <span class="code-type">true</span>;<br>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-inner">
+    <span class="marquee-item">C# .NET Core</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">ASP.NET Web API</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">SQL Server</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">Windows Services</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">REST API Integration</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">Azure</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">DevExpress WinForms</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">SSL / TLS</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">Git · Postman · SSMS</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">C# .NET Core</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">ASP.NET Web API</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">SQL Server</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">Windows Services</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">REST API Integration</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">Azure</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">DevExpress WinForms</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">SSL / TLS</span><span class="marquee-item marquee-sep">✦</span>
+    <span class="marquee-item">Git · Postman · SSMS</span><span class="marquee-item marquee-sep">✦</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text reveal">
+    <div class="section-label">About Me</div>
+    <h2 class="section-title">Backend dev who<br>builds things that <em>last</em></h2>
+    <p>I'm <strong>Prem Britto</strong>, a <em>.NET Developer</em> with 1.5 years of hands-on experience building backend systems for enterprise applications. My work spans <strong>printer management platforms</strong> and <strong>cybersecurity solutions</strong> — environments where uptime, data integrity, and security are non-negotiable.</p>
+    <p>I specialize in <strong>C#, ASP.NET Core, SQL Server</strong>, and <strong>Windows Services</strong>. I've built dynamic API orchestration layers, optimized production SQL pipelines, and implemented secure communication modules that serve real enterprise clients.</p>
+    <p>I approach every bug as a learning opportunity and every feature as a chance to write code that the next developer will thank me for. My goal is to grow into a <strong>Senior .NET Engineer</strong> — someone who designs systems with intent and drives technical decisions.</p>
+    <div class="about-highlight">
+      "I don't just fix bugs — I understand why they happened and make sure they don't come back."
+    </div>
+  </div>
+  <div class="about-stats reveal">
+    <div class="stat-card">
+      <div class="stat-num">1.5</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">10+</div>
+      <div class="stat-label">Features Shipped</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Industry Domains</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Lines of C# Written</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label reveal">Technical Skills</div>
+  <h2 class="section-title reveal">My <em>toolkit</em></h2>
+  <div class="skills-grid">
+    <div class="skill-group reveal">
+      <div class="skill-group-icon">⚙️</div>
+      <div class="skill-group-title">Backend & Core</div>
+      <span class="skill-tag blue">C#</span>
+      <span class="skill-tag blue">.NET Core</span>
+      <span class="skill-tag">ASP.NET Web API</span>
+      <span class="skill-tag">Entity Framework Core</span>
+      <span class="skill-tag">LINQ</span>
+      <span class="skill-tag">Windows Services</span>
+      <span class="skill-tag">Dependency Injection</span>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-icon">🗄️</div>
+      <div class="skill-group-title">Database & SQL</div>
+      <span class="skill-tag blue">SQL Server</span>
+      <span class="skill-tag">Stored Procedures</span>
+      <span class="skill-tag">Temp Tables</span>
+      <span class="skill-tag">Transactions</span>
+      <span class="skill-tag">Query Optimization</span>
+      <span class="skill-tag">SSMS</span>
+      <span class="skill-tag">Indexes & Execution Plans</span>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-icon">☁️</div>
+      <div class="skill-group-title">Cloud & Integration</div>
+      <span class="skill-tag blue">Azure App Services</span>
+      <span class="skill-tag">Azure SQL</span>
+      <span class="skill-tag">REST API Integration</span>
+      <span class="skill-tag">JSON Processing</span>
+      <span class="skill-tag">Dynamic API Calls</span>
+      <span class="skill-tag">HttpClient</span>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-icon">🛡️</div>
+      <div class="skill-group-title">Security & Config</div>
+      <span class="skill-tag">SSL / TLS</span>
+      <span class="skill-tag">Certificate Handling</span>
+      <span class="skill-tag">HTTPS Enforcement</span>
+      <span class="skill-tag">Secure API Comm.</span>
+      <span class="skill-tag">Auth Middleware</span>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-icon">🖥️</div>
+      <div class="skill-group-title">UI & Reporting</div>
+      <span class="skill-tag blue">DevExpress WinForms</span>
+      <span class="skill-tag">Dynamic Data Binding</span>
+      <span class="skill-tag">Grid Components</span>
+      <span class="skill-tag">Report Generation</span>
+      <span class="skill-tag">WinForms</span>
+    </div>
+    <div class="skill-group reveal">
+      <div class="skill-group-icon">🏗️</div>
+      <div class="skill-group-title">Architecture & Practices</div>
+      <span class="skill-tag">Clean Architecture</span>
+      <span class="skill-tag">SOLID Principles</span>
+      <span class="skill-tag">Repository Pattern</span>
+      <span class="skill-tag">OOP</span>
+      <span class="skill-tag">Config-Driven Design</span>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label reveal">Work Experience</div>
+  <h2 class="section-title reveal">Where I've <em>made impact</em></h2>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2023 — Present</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <h3>Software Developer — .NET</h3>
+        <div class="timeline-company">Enterprise Application Division · Printer &amp; Cybersecurity Domain</div>
+        <p>Building and maintaining enterprise backend systems handling real-time device data, dynamic API orchestration, and secure communications across diverse customer environments.</p>
+        <ul class="timeline-highlights">
+          <li>Developed Windows Services that dynamically call external APIs based on per-customer configuration, enabling a single codebase to serve hundreds of enterprise clients with different workflows.</li>
+          <li>Implemented bulk data insert operations using SQL temp tables and transactions — replacing slow row-by-row inserts with a high-throughput pipeline that handles large datasets reliably.</li>
+          <li>Designed JSON-based device metadata classification logic to dynamically categorize and route device data to correct downstream systems at runtime.</li>
+          <li>Identified and optimized production SQL stored procedures causing slowdowns — reduced execution time through index tuning and query restructuring.</li>
+          <li>Configured SSL/TLS certificate handling for secure API communication across enterprise network environments.</li>
+          <li>Built and maintained DevExpress WinForms UI components for internal management dashboards used by enterprise clients.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="t-tag">C#</span>
+          <span class="t-tag">ASP.NET Core</span>
+          <span class="t-tag">Windows Services</span>
+          <span class="t-tag">SQL Server</span>
+          <span class="t-tag">DevExpress</span>
+          <span class="t-tag">Azure</span>
+          <span class="t-tag">REST APIs</span>
+          <span class="t-tag">SSL/TLS</span>
+          <span class="t-tag">JSON</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label reveal">Projects / Work Highlights</div>
+  <h2 class="section-title reveal">Things I've <em>built</em></h2>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-num">01 / Backend Services</div>
+      <h3>Dynamic API Orchestration Service</h3>
+      <p>A Windows Service that reads customer configuration at startup and dynamically determines which APIs to call, when, and how — enabling one codebase to serve hundreds of enterprise clients with unique workflows and endpoint requirements.</p>
+      <div class="project-stack">
+        <span class="p-tag">C# .NET</span>
+        <span class="p-tag">Windows Service</span>
+        <span class="p-tag">REST API</span>
+        <span class="p-tag">JSON Config</span>
+        <span class="p-tag">SQL Server</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">02 / Data Engineering</div>
+      <h3>Bulk Insert Pipeline with Transactions</h3>
+      <p>High-throughput data insert system using SQL temp tables and explicit transaction management. Handles thousands of records reliably with rollback safety — replacing a slow row-by-row approach that was failing under load in production.</p>
+      <div class="project-stack">
+        <span class="p-tag">SQL Server</span>
+        <span class="p-tag">Stored Procedures</span>
+        <span class="p-tag">Temp Tables</span>
+        <span class="p-tag">Transactions</span>
+        <span class="p-tag">C#</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">03 / Device Intelligence</div>
+      <h3>JSON Device Metadata Classifier</h3>
+      <p>Classification engine that parses JSON payloads from various device types and applies rule-based logic to categorize, tag, and route device metadata — replacing a hardcoded approach with a dynamic, config-driven model that scales across new device types.</p>
+      <div class="project-stack">
+        <span class="p-tag">C#</span>
+        <span class="p-tag">JSON Processing</span>
+        <span class="p-tag">.NET Core</span>
+        <span class="p-tag">EF Core</span>
+        <span class="p-tag">SQL Server</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">04 / Security & Config</div>
+      <h3>Secure API Communication Module</h3>
+      <p>Implemented SSL/TLS certificate configuration for enterprise API clients in restricted network environments. Handled cert loading, HTTPS enforcement, and custom certificate validation logic to meet strict enterprise security standards.</p>
+      <div class="project-stack">
+        <span class="p-tag">ASP.NET Core</span>
+        <span class="p-tag">SSL/TLS</span>
+        <span class="p-tag">HTTPS</span>
+        <span class="p-tag">Certificate Mgmt</span>
+        <span class="p-tag">HttpClient</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="section-label reveal">Tools &amp; Technologies</div>
+  <h2 class="section-title reveal">What I work <em>with daily</em></h2>
+  <div class="tools-grid">
+    <div class="tool-badge reveal">
+      <div class="tool-icon">💻</div>
+      <div class="tool-name">Visual Studio</div>
+    </div>
+    <div class="tool-badge reveal">
+      <div class="tool-icon">🗃️</div>
+      <div class="tool-name">SSMS</div>
+    </div>
+    <div class="tool-badge reveal">
+      <div class="tool-icon">📬</div>
+      <div class="tool-name">Postman</div>
+    </div>
+    <div class="tool-badge reveal">
+      <div class="tool-icon">🔀</div>
+      <div class="tool-name">Git</div>
+    </div>
+    <div class="tool-badge reveal">
+      <div class="tool-icon">☁️</div>
+      <div class="tool-name">Azure Portal</div>
+    </div>
+    <div class="tool-badge reveal">
+      <div class="tool-icon">📊</div>
+      <div class="tool-name">DevExpress</div>
+    </div>
+    <div class="tool-badge reveal">
+      <div class="tool-icon">🐙</div>
+      <div class="tool-name">GitHub</div>
+    </div>
+    <div class="tool-badge reveal">
+      <div class="tool-icon">🔐</div>
+      <div class="tool-name">SSL / TLS Tools</div>
+    </div>
+  </div>
+</section>
+
+<!-- BIO / LINKEDIN / GITHUB CARDS -->
+<section id="bio-cards">
+  <div class="section-label reveal">Professional Presence</div>
+  <h2 class="section-title reveal">Bio, LinkedIn &amp; <em>GitHub</em></h2>
+  <div class="bio-cards-grid">
+    <div class="bio-card reveal">
+      <div class="bio-card-label">📄 Professional Bio</div>
+      <p>Prem Britto is a backend-focused .NET Developer with 1.5 years of experience building enterprise software across printer management and cybersecurity domains. Proficient in C#, ASP.NET Core, SQL Server, and Windows Services, he specializes in developing dynamic, configuration-driven backend systems that scale across diverse customer environments. Prem has a proven track record of solving real production issues — from optimizing slow SQL queries to implementing secure API communication pipelines. He brings a methodical approach to debugging, a strong understanding of data processing and integration, and a genuine drive to grow into a Senior .NET Engineer. He is currently seeking opportunities where he can contribute to meaningful backend systems and continue growing as an engineer.</p>
+    </div>
+    <div class="bio-card reveal">
+      <div class="bio-card-label teal">💼 LinkedIn Headline</div>
+      <div class="headline-text">
+        .NET Developer | C# · ASP.NET Core · SQL Server | Backend Engineer building enterprise systems in printer tech &amp; cybersecurity | Aspiring Senior .NET Engineer
+      </div>
+    </div>
+    <div class="bio-card reveal">
+      <div class="bio-card-label rust">🐙 GitHub Bio</div>
+      <div class="github-text">
+        .NET Developer · C# &amp; ASP.NET Core backend engineer. Building Windows Services, REST APIs &amp; SQL pipelines for enterprise apps. Always learning. Growing toward Senior .NET.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner reveal">
+    <div class="section-label">Contact</div>
+    <h2 class="section-title">Let's <em>build together</em></h2>
+    <p>I'm open to backend .NET opportunities — enterprise applications, API development, or anything that lets me write clean, impactful C# code. Let's connect and build something meaningful.</p>
+    <div class="contact-links">
+      <a href="mailto:prembritto@email.com" class="contact-link blue-link">✉ Email Me</a>
+      <a href="https://linkedin.com/in/prembritto" target="_blank" class="contact-link">in LinkedIn</a>
+      <a href="https://github.com/prembritto" target="_blank" class="contact-link">⌥ GitHub</a>
+      <a href="#" class="contact-link">⬇ Resume</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 — Prem Britto · .NET Developer</span>
+  <span>Built with C# spirit &amp; CSS precision</span>
+</footer>
+
+<script>
+  // Smooth nav scroll — event delegation (no window.scrollTo conflict)
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('[data-nav]');
+    if (link) {
+      e.preventDefault();
+      const target = document.getElementById(link.getAttribute('data-nav'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.querySelectorAll('a, button, .project-card, .stat-card, .skill-group, .tool-badge, .bio-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2.2)'; ring.style.opacity = '0.15'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.opacity = '0.5'; });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
